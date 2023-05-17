@@ -1,6 +1,8 @@
 const app = require("./app");
 const cloudinary = require("cloudinary");
 const connectDatabase = require("./config/database");
+const path = require("path");
+const express = require("express");
 
 // Handling Uncaught Exception
 process.on("uncaughtException", (err) => {
@@ -21,6 +23,12 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+app.use(express.static(path.join(__dirname, "./frontend/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./frontend/build/index.html"));
 });
 
 const server = app.listen(process.env.PORT, () => {
